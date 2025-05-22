@@ -18,10 +18,12 @@ export const login = (username, password) => async (dispatch) => {
       payload: {
         token: res.data.token,
         userType: userType,
+        user: res.data.user, // Include the user object
       },
     });
     localStorage.setItem('token', res.data.token);
     localStorage.setItem('userType', userType);
+    localStorage.setItem('user', JSON.stringify(res.data.user)); // Store user
     toast.success('Login successful!');
 
     setTimeout(() => {

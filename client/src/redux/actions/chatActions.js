@@ -25,14 +25,33 @@ export const getContacts = () => async (dispatch) => {
 };
 
 // Send Message
-export const sendMessage = (formData) => async (dispatch) => {
+export const sendMessage = (formData) => async (dispatch, getState) => {
   try {
     const isFormData = formData instanceof FormData;
     const config = isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
     const res = await api.post('/messages/send', formData, config);
-    dispatch({ type: SEND_MESSAGE_SUCCESS, payload: res.data.data });
+    
+    // Get the current user from auth state
+    const { user } = getState().auth;
+    
+    // Add sender info to the message
+    const messageWithSender = {
+      ...res.data.data,
+      senderId: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName
+      },
+      // Ensure these fields are properly set
+      sentAt: new Date().toISOString(),
+      read: false
+    };
+    
+    console.log('Sending message to store:', messageWithSender);
+    dispatch({ type: SEND_MESSAGE_SUCCESS, payload: messageWithSender });
     toast.success('Message sent successfully!');
   } catch (error) {
+    console.error('Error sending message:', error);
     dispatch({
       type: SEND_MESSAGE_FAIL,
       payload: error.response?.data?.message || 'Failed to send message',
@@ -42,11 +61,33 @@ export const sendMessage = (formData) => async (dispatch) => {
 };
 
 // Get Conversation
-export const getConversation = (contactId, page = 1, limit = 20) => async (dispatch) => {
+export const getConversation = (contactId, page = 1, limit = 20) => async (dispatch, getState) => {
   try {
     const res = await api.get(`/messages/${contactId}?page=${page}&limit=${limit}`);
-    dispatch({ type: GET_CONVERSATION_SUCCESS, payload: { contactId, messages: res.data } });
+    console.log('Fetched conversation:', { contactId, messages: res.data });
+    
+    // Get the current user from auth state
+    const { user } = getState().auth;
+    
+    // Process messages to ensure they have the correct structure
+    const processedMessages = res.data.map(message => ({
+      ...message,
+      senderId: message.senderId._id === user._id 
+        ? { _id: user._id, firstName: user.firstName, lastName: user.lastName }
+        : message.senderId,
+      sentAt: message.sentAt || new Date().toISOString(),
+      read: message.read || false
+    }));
+    
+    dispatch({ 
+      type: GET_CONVERSATION_SUCCESS, 
+      payload: { 
+        contactId, 
+        messages: processedMessages 
+      } 
+    });
   } catch (error) {
+    console.error('Error fetching conversation:', error);
     dispatch({
       type: GET_CONVERSATION_FAIL,
       payload: error.response?.data?.message || 'Failed to fetch conversation',
@@ -56,5 +97,6 @@ export const getConversation = (contactId, page = 1, limit = 20) => async (dispa
 };
 
 export const receiveMessage = (message) => (dispatch) => {
+  console.log('Received message in action:', message);
   dispatch({ type: RECEIVE_MESSAGE, payload: message });
 };

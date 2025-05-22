@@ -132,8 +132,46 @@ exports.sendMessage = async (req, res) => {
     });
 
     await message.save();
-    res.status(201).json({ message: 'Message sent successfully', data: message });
+
+    // Emit socket event after saving the message
+    const populatedMessage = await Message.findById(message._id)
+      .populate('senderId', 'firstName lastName')
+      .populate('receiverId', 'firstName lastName');
+
+    // Get the io instance from the request
+    const io = req.app.get('io');
+    
+    if (!io) {
+      console.error('Socket.IO instance not found');
+      return res.status(201).json({ 
+        message: 'Message saved but real-time update failed', 
+        data: populatedMessage 
+      });
+    }
+
+    try {
+      // Emit to receiver's room
+      io.to(receiverId).emit('receiveMessage', populatedMessage);
+      console.log(`Message emitted to receiver ${receiverId}`);
+      
+      // Emit back to sender for confirmation
+      io.to(senderId).emit('messageSent', populatedMessage);
+      console.log(`Message confirmation emitted to sender ${senderId}`);
+
+      res.status(201).json({ 
+        message: 'Message sent successfully', 
+        data: populatedMessage 
+      });
+    } catch (socketError) {
+      console.error('Error emitting socket events:', socketError);
+      // Still return success since message was saved
+      res.status(201).json({ 
+        message: 'Message saved but real-time update failed', 
+        data: populatedMessage 
+      });
+    }
   } catch (error) {
+    console.error('Error in sendMessage:', error);
     res.status(500).json({ message: 'Server error sending message', error: error.message });
   }
 };

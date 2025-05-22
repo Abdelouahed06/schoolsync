@@ -11,33 +11,60 @@ import socket from '../../utils/socket';
 
 const Chat = () => {
   const dispatch = useDispatch();
-  const { userType, token } = useSelector((state) => state.auth);
   const { error } = useSelector((state) => state.chat);
   const [selectedContact, setSelectedContact] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const { userType, user, token } = useSelector((state) => state.auth); // make sure you get `user`
 
   useEffect(() => {
     if (token) {
+      console.log('Initializing socket connection...');
       socket.auth = { token };
       socket.connect();
-
+  
       socket.on('connect', () => {
-        console.log('Connected to Socket.IO server');
+        console.log('Connected to Socket.IO server with ID:', socket.id);
+        socket.emit('join', user._id);
       });
-
-      socket.on('message', (message) => {
+  
+      socket.on('receiveMessage', (message) => {
+        console.log('Received message in student chat:', message);
         dispatch(receiveMessage(message));
       });
 
+      socket.on('messageSent', (message) => {
+        console.log('Message sent confirmation:', message);
+        // Force it to show up in sender's window
+        socket.emit('receiveMessage', message); // ✅ Send it back to self as if it was received
+      });
+      
+      
+  
       socket.on('connect_error', (err) => {
         console.error('Socket.IO connection error:', err.message);
       });
 
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Disconnected from Socket.IO server. Reason:', reason);
+      });
+  
       return () => {
+        console.log('Cleaning up socket connection...');
+        socket.off('connect');
+        socket.off('receiveMessage');
+        socket.off('messageSent');
+        socket.off('connect_error');
+        socket.off('error');
+        socket.off('disconnect');
         socket.disconnect();
       };
     }
-  }, [token, dispatch]);
+  }, [token, user._id, dispatch]);
+  
 
   useEffect(() => {
     dispatch(getContacts());
@@ -47,9 +74,8 @@ const Chat = () => {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar expanded={expanded} setExpanded={setExpanded} />
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          expanded ? 'md:ml-64' : 'md:ml-16'
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 ${expanded ? 'md:ml-64' : 'md:ml-16'
+          }`}
       >
         <Header expanded={expanded} setExpanded={setExpanded} />
         <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 md:pt-16">
@@ -65,9 +91,8 @@ const Chat = () => {
           <div className="bg-white rounded-lg shadow-lg h-[calc(100vh-12rem)] md:h-[calc(100vh-8rem)]">
             <div className="flex flex-col md:flex-row h-full">
               <div
-                className={`w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-200 ${
-                  selectedContact ? 'hidden md:block' : 'block'
-                }`}
+                className={`w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-200 ${selectedContact ? 'hidden md:block' : 'block'
+                  }`}
               >
                 <ContactList
                   onSelectContact={setSelectedContact}
@@ -76,9 +101,8 @@ const Chat = () => {
                 />
               </div>
               <div
-                className={`flex-1 flex flex-col ${
-                  selectedContact ? 'block' : 'hidden md:flex'
-                }`}
+                className={`flex-1 flex flex-col ${selectedContact ? 'block' : 'hidden md:flex'
+                  }`}
               >
                 {selectedContact ? (
                   <>

@@ -28,6 +28,9 @@ const io = socketIo(server, {
   },
 });
 
+// Make io accessible to our app
+app.set('io', io);
+
 connectDB();
 
 app.use(express.json());
@@ -50,16 +53,40 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   socket.on('join', (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined room`);
+    try {
+      socket.join(userId);
+      console.log(`User ${userId} joined room ${userId}`);
+    } catch (error) {
+      console.error('Error in join event:', error);
+    }
   });
 
   socket.on('sendMessage', (message) => {
-    io.to(message.receiverId).emit('receiveMessage', message);
+    try {
+      console.log('Received message to send:', {
+        from: message.senderId,
+        to: message.receiverId,
+        content: message.content
+      });
+      
+      // Emit to the specific room (receiver's ID)
+      io.to(message.receiverId).emit('receiveMessage', message);
+      console.log(`Message sent to room ${message.receiverId}`);
+      
+      // Also emit back to sender for confirmation
+      socket.emit('messageSent', message);
+    } catch (error) {
+      console.error('Error in sendMessage event:', error);
+      socket.emit('error', { message: 'Error sending message' });
+    }
   });
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+  });
+
+  socket.on('error', (error) => {
+    console.error('Socket error:', error);
   });
 });
 

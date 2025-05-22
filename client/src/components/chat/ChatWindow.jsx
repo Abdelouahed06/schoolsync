@@ -1,17 +1,42 @@
 import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getConversation } from '../../redux/actions/chatActions';
 
 const ChatWindow = ({ selectedContact, userType }) => {
   const { conversations } = useSelector((state) => state.chat);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const messages = selectedContact ? conversations[selectedContact._id] || [] : [];
   const messagesEndRef = useRef(null);
+  const pollIntervalRef = useRef(null);
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Fetch conversation when selected contact changes and set up polling
+  useEffect(() => {
+    if (selectedContact) {
+      // Initial fetch
+      dispatch(getConversation(selectedContact._id));
+      
+      // Set up polling every 5 seconds
+      pollIntervalRef.current = setInterval(() => {
+        dispatch(getConversation(selectedContact._id));
+      }, 5000); //300
+    }
+
+    // Cleanup polling on unmount or contact change
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, [selectedContact, dispatch]);
+
   const isSentByUser = (message) => {
-    return message.senderType.toLowerCase() === userType.toLowerCase();
+    return message.senderId._id === user._id;
   };
 
   const renderAttachment = (attachment) => {

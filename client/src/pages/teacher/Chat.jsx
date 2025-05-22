@@ -11,34 +11,60 @@ import socket from '../../utils/socket';
 
 const Chat = () => {
   const dispatch = useDispatch();
-  const { userType, token } = useSelector((state) => state.auth);
   const { error } = useSelector((state) => state.chat);
   const [selectedContact, setSelectedContact] = useState(null);
   const [expanded, setExpanded] = useState(false);
 
-  // Initialize Socket.IO connection
+  const { userType, user, token } = useSelector((state) => state.auth); // make sure you get `user`
+
   useEffect(() => {
     if (token) {
+      console.log('Initializing socket connection...');
       socket.auth = { token };
       socket.connect();
-
+  
       socket.on('connect', () => {
-        console.log('Connected to Socket.IO server');
+        console.log('Connected to Socket.IO server with ID:', socket.id);
+        socket.emit('join', user._id);
       });
-
-      socket.on('message', (message) => {
+  
+      socket.on('receiveMessage', (message) => {
+        console.log('Received message in teacher chat:', message);
         dispatch(receiveMessage(message));
       });
 
+      socket.on('messageSent', (message) => {
+        console.log('Message sent confirmation:', message);
+        // Force it to show up in sender's window
+        socket.emit('receiveMessage', message); // ✅ Send it back to self as if it was received
+      });
+      
+      
+  
       socket.on('connect_error', (err) => {
         console.error('Socket.IO connection error:', err.message);
       });
 
+      socket.on('error', (error) => {
+        console.error('Socket error:', error);
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Disconnected from Socket.IO server. Reason:', reason);
+      });
+  
       return () => {
+        console.log('Cleaning up socket connection...');
+        socket.off('connect');
+        socket.off('receiveMessage');
+        socket.off('messageSent');
+        socket.off('connect_error');
+        socket.off('error');
+        socket.off('disconnect');
         socket.disconnect();
       };
     }
-  }, [token, dispatch]);
+  }, [token, user._id, dispatch]);
 
   // Fetch contacts on mount
   useEffect(() => {

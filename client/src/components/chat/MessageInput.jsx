@@ -35,6 +35,12 @@ const MessageInput = ({ selectedContact, userType }) => {
     e.preventDefault();
     if (!content.trim() || !selectedContact) return;
 
+    console.log('Sending message to:', {
+      receiverId: selectedContact._id,
+      receiverType: userType === 'teacher' ? 'Student' : 'Teacher',
+      content
+    });
+
     const formData = {
       receiverId: selectedContact._id,
       receiverType: userType === 'teacher' ? 'Student' : 'Teacher',
@@ -48,6 +54,13 @@ const MessageInput = ({ selectedContact, userType }) => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile || !selectedContact) return;
+
+    console.log('Sending file:', {
+      receiverId: selectedContact._id,
+      receiverType: userType === 'teacher' ? 'Student' : 'Teacher',
+      fileName: selectedFile.name,
+      fileType: selectedFile.type
+    });
 
     setFile(selectedFile);
 

@@ -23,17 +23,24 @@ const chatReducer = (state = initialState, action) => {
     case SEND_MESSAGE_SUCCESS: {
       const { receiverId, senderId } = action.payload;
       const contactId = receiverId;
-      return {
-        ...state,
-        conversations: {
-          ...state.conversations,
-          [contactId]: [
-            ...(state.conversations[contactId] || []),
-            action.payload,
-          ],
-        },
-        error: null,
-      };
+      console.log('SEND_MESSAGE_SUCCESS:', { contactId, message: action.payload });
+      
+      const existingMessages = state.conversations[contactId] || [];
+      
+      const messageExists = existingMessages.some(msg => msg._id === action.payload._id);
+      
+      if (!messageExists) {
+        return {
+          ...state,
+          conversations: {
+            ...state.conversations,
+            [contactId]: [...existingMessages, action.payload],
+            [senderId._id]: [...(state.conversations[senderId._id] || []), action.payload],
+          },
+          error: null,
+        };
+      }
+      return state;
     }
     case SEND_MESSAGE_FAIL:
       return { ...state, error: action.payload };
@@ -50,7 +57,8 @@ const chatReducer = (state = initialState, action) => {
       return { ...state, error: action.payload };
     case RECEIVE_MESSAGE: {
       const { senderId, receiverId } = action.payload;
-      const contactId = senderId;
+      const contactId = senderId._id || senderId;
+      console.log('RECEIVE_MESSAGE:', { contactId, message: action.payload });
       return {
         ...state,
         conversations: {
