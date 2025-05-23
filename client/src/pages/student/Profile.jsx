@@ -68,9 +68,8 @@ const Profile = () => {
       <div className="flex min-h-screen bg-gray-100">
         <Sidebar expanded={expanded} setExpanded={setExpanded} />
         <div
-          className={`flex-1 flex flex-col transition-all duration-300 ${
-            expanded ? 'lg:ml-64' : 'lg:ml-16'
-          }`}
+          className={`flex-1 flex flex-col transition-all duration-300 ${expanded ? 'lg:ml-64' : 'lg:ml-16'
+            }`}
         >
           <Header expanded={expanded} setExpanded={setExpanded} />
           <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16 flex items-center justify-center">
@@ -86,9 +85,8 @@ const Profile = () => {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar expanded={expanded} setExpanded={setExpanded} />
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          expanded ? 'lg:ml-64' : 'lg:ml-16'
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 ${expanded ? 'lg:ml-64' : 'lg:ml-16'
+          }`}
       >
         <Header expanded={expanded} setExpanded={setExpanded} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16">
@@ -184,9 +182,14 @@ const Profile = () => {
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                           />
                         ) : (
-                          <p className="text-gray-800">{profile.phone || 'Not provided'}</p>
+                          <p className="text-gray-800">
+                            {profile.phone
+                              ? `+212 ${profile.phone.slice(0, 3)} ${profile.phone.slice(3, 6)} ${profile.phone.slice(6)}`
+                              : 'Not provided'}
+                          </p>
                         )}
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-500">
                           Address

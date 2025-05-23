@@ -75,10 +75,11 @@ const Profile = () => {
       <Sidebar expanded={expanded} setExpanded={setExpanded} />
       <div className={`flex-1 flex flex-col transition-all duration-300 ${expanded ? 'lg:ml-64' : 'lg:ml-16'}`}>
         <Header expanded={expanded} setExpanded={setExpanded} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 lg:pt-16">
           <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl lg:mt-10 mt-20 shadow-sm overflow-hidden">
               <div className="relative h-40 bg-gradient-to-r from-indigo-500 to-purple-600">
+
                 <div className="absolute -bottom-16 left-6">
                   <div className="relative group">
                     <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg">

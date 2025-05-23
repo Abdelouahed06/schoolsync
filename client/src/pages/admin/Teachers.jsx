@@ -61,7 +61,7 @@ const Teachers = () => {
 
   const handleSubmit = async (formData) => {
       if (selectedTeacher) {
-        await dispatch(updateStudent(selectedTeacher._id, formData));
+        await dispatch(updateTeacher(selectedTeacher._id, formData));
       } else {
         await dispatch(addTeacher(formData));
       }
@@ -199,7 +199,7 @@ const Teachers = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-indigo-700">
                   <tr>
-                    {['Order', 'Name', 'Email', 'Subjects', 'Classes', 'Profile', 'Timeline', 'Actions'].map((col) => (
+                    {['No', 'Name', 'Email', 'Subjects', 'Classes', 'Profile', 'Timeline', 'Actions'].map((col) => (
                       <th
                         key={col}
                         className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"

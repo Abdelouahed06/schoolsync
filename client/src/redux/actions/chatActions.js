@@ -31,10 +31,8 @@ export const sendMessage = (formData) => async (dispatch, getState) => {
     const config = isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
     const res = await api.post('/messages/send', formData, config);
     
-    // Get the current user from auth state
     const { user } = getState().auth;
     
-    // Add sender info to the message
     const messageWithSender = {
       ...res.data.data,
       senderId: {
@@ -42,7 +40,6 @@ export const sendMessage = (formData) => async (dispatch, getState) => {
         firstName: user.firstName,
         lastName: user.lastName
       },
-      // Ensure these fields are properly set
       sentAt: new Date().toISOString(),
       read: false
     };
@@ -66,10 +63,8 @@ export const getConversation = (contactId, page = 1, limit = 20) => async (dispa
     const res = await api.get(`/messages/${contactId}?page=${page}&limit=${limit}`);
     console.log('Fetched conversation:', { contactId, messages: res.data });
     
-    // Get the current user from auth state
     const { user } = getState().auth;
     
-    // Process messages to ensure they have the correct structure
     const processedMessages = res.data.map(message => ({
       ...message,
       senderId: message.senderId._id === user._id 

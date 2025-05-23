@@ -4,7 +4,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 const Table = ({ headers, data, onEdit, onDelete, headerClassName, rowClassName }) => {
   const getDataKey = (header) => {
     const map = {
-      'Order': 'order',
+      'No': 'order',
       'First Name': 'firstName',
       'Last Name': 'lastName',
       'Email': 'email',

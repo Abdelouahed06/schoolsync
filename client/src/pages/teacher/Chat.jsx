@@ -15,7 +15,7 @@ const Chat = () => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [expanded, setExpanded] = useState(false);
 
-  const { userType, user, token } = useSelector((state) => state.auth); // make sure you get `user`
+  const { userType, user, token } = useSelector((state) => state.auth); 
 
   useEffect(() => {
     if (token) {
@@ -35,8 +35,7 @@ const Chat = () => {
 
       socket.on('messageSent', (message) => {
         console.log('Message sent confirmation:', message);
-        // Force it to show up in sender's window
-        socket.emit('receiveMessage', message); // ✅ Send it back to self as if it was received
+        socket.emit('receiveMessage', message);
       });
       
       
@@ -66,7 +65,7 @@ const Chat = () => {
     }
   }, [token, user._id, dispatch]);
 
-  // Fetch contacts on mount
+
   useEffect(() => {
     dispatch(getContacts());
   }, [dispatch]);

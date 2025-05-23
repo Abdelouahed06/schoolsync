@@ -20,7 +20,7 @@ const Classes = () => {
   const [expanded, setExpanded] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // State for modal visibility
   const [selectedImage, setSelectedImage] = useState(''); // State for selected image URL
-  const studentsPerPage = 5;
+  const studentsPerPage = 10;
 
   useEffect(() => {
     dispatch(getTeacherClasses());
@@ -182,7 +182,7 @@ const Classes = () => {
                   <table className="min-w-full divide-y divide-gray-200" role="grid">
                     <thead className="bg-indigo-700">
                       <tr>
-                        {['Order', 'Profile', 'Class', 'First Name', 'Last Name', 'Timeline'].map((header) => (
+                        {['No', 'Profile', 'Class', 'First Name', 'Last Name', 'Timeline'].map((header) => (
                           <th
                             key={header}
                             scope="col"

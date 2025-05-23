@@ -3,7 +3,7 @@ import React from 'react';
 const Table = ({ headers, data, emptyMessage }) => {
   const getDataKey = (header) => {
     const map = {
-      'Order': 'order',
+      'No': 'order',
       'Profile': 'profile',
       'Class Name': 'className',
       'First Name': 'firstName',

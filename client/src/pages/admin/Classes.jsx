@@ -140,7 +140,7 @@ const Classes = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-indigo-700">
                   <tr>
-                    {['Order', 'Name', 'Teachers', 'Students', 'Timeline', 'Actions'].map((col) => (
+                    {['No', 'Name', 'Teachers', 'Students', 'Timeline', 'Actions'].map((col) => (
                       <th
                         key={col}
                         className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"

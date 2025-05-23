@@ -29,7 +29,7 @@ const Students = () => {
   const [expanded, setExpanded] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
-  const studentsPerPage = 6;
+  const studentsPerPage = 10;
 
   useEffect(() => {
     dispatch(getStudents());
@@ -175,7 +175,7 @@ const Students = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-indigo-700">
                   <tr>
-                    {['Order', 'First Name', 'Last Name', 'Email', 'Class', 'Profile', 'Actions'].map((col) => (
+                    {['No', 'First Name', 'Last Name', 'Email', 'Class', 'Profile', 'Actions'].map((col) => (
                       <th
                         key={col}
                         className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"

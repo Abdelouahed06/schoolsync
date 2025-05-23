@@ -221,7 +221,11 @@ const Profile = () => {
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                           />
                         ) : (
-                          <p className="text-gray-800">{profile.phone || 'Not provided'}</p>
+                          <p className="text-gray-800">
+                            {profile.phone
+                              ? `+212 ${profile.phone.slice(0, 3)} ${profile.phone.slice(3, 6)} ${profile.phone.slice(6)}`
+                              : 'Not provided'}
+                          </p>
                         )}
                       </div>
                       <div>
