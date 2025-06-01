@@ -34,3 +34,8 @@ coverage/
 
 # Optional: If you use TypeScript
 *.tsbuildinfo
+
+
+# Ignore all files in uploads, but not the folder itself
+uploads/*
+!uploads/.gitkeep
