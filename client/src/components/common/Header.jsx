@@ -4,7 +4,7 @@ import { logout } from '../../redux/actions/authActions';
 import { getAdminProfile } from '../../redux/actions/adminActions';
 import { getTeacherProfile } from '../../redux/actions/teacherActions';
 import { getStudentProfile } from '../../redux/actions/studentActions';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaBell, FaEnvelope, FaBars } from 'react-icons/fa';
 
 const Header = ({ expanded, setExpanded }) => {
@@ -109,12 +109,12 @@ const Header = ({ expanded, setExpanded }) => {
                   </div>
                   <ul className="py-1">
                     <li>
-                      <a
-                        href={`/${userType}/profile`}
+                      <Link
+                        to={`/${userType}/profile`}
                         className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         My Profile
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <button
