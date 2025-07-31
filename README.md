@@ -12,7 +12,7 @@ SchoolSync is a full-stack web application designed to streamline school managem
 ### For Teachers
 - Manage courses, quizzes, and classes
 - Grade submissions and interact with students
-- Real-time chat with students and other teachers
+- Real-time chat with students
 - Detailed course and quiz analytics
 
 ### For Students
@@ -67,7 +67,7 @@ SchoolSync is a full-stack web application designed to streamline school managem
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/schoolsync.git
+git clone https://github.com/Abdelouahed06/schoolsync.git
 cd schoolsync
 ```
 
